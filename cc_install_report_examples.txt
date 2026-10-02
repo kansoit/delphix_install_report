@@ -1,0 +1,135 @@
+================================================================================
+  DELPHIX CONTINUOUS COMPLIANCE - CONFIGURATION REPORT GENERATION SCRIPTS
+================================================================================
+
+Este archivo contiene ejemplos de ejecucion en Espanol e Ingles para los scripts de 
+generacion de reporte de configuracion de Delphix Continuous Compliance.
+
+--------------------------------------------------------------------------------
+1. INVENTARIO DE SCRIPTS / SCRIPT INVENTORY
+--------------------------------------------------------------------------------
+- PowerShell (Espanol): cc_install_report_sp.ps1
+- PowerShell (Ingles) : cc_install_report_en.ps1
+- Bash (Espanol)      : cc_install_report_sp.sh
+- Bash (Ingles)       : cc_install_report_en.sh
+
+--------------------------------------------------------------------------------
+2. PARAMETROS CLI / CLI PARAMETERS
+--------------------------------------------------------------------------------
+1. Cliente / Client Name  :
+   - PowerShell : -ClientName / -c / Posicional 1 (Default: "Cliente" / "Client")
+   - Bash       : -c / --client-name (Default: "Cliente" / "Client")
+
+2. Prefijo / Prefix       :
+   - PowerShell : -Prefix / -p / Posicional 2 (Default: '0-')
+   - Bash       : -p / --prefix (Default: '0-')
+   - Valores    : '0-' (Filtra algoritmos/dominios/clasificadores con '0-')
+                  ""   (Cadena vacia: recupera TODO sin filtrar)
+
+3. Nombre de Reporte / Output File :
+   - PowerShell : -OutputFile / -o / Posicional 3 (Default: "<Cliente> - Reporte Configuracion Delphix Continuous Compliance.md")
+   - Bash       : -o / --output (Default: "<Cliente> - Reporte Configuracion Delphix Continuous Compliance.md")
+
+4. Limite / Limit (Opcional) :
+   - PowerShell : -Limit / -l / Posicional 4 (Default: 1000)
+   - Bash       : -l / --limit (Default: 1000)
+
+
+================================================================================
+3. EJEMPLOS EN ESPANOL / SPANISH EXAMPLES
+================================================================================
+
+--- POWERSHELL (cc_install_report_sp.ps1) ---
+
+# Ejemplo 1: Ejecucion basica con valores por defecto (Cliente = 'Cliente', Prefijo = '0-')
+.\cc_install_report_sp.ps1
+
+# Ejemplo 2: Uso posicional con nombre de cliente ficticio y prefijo por defecto '0-'
+.\cc_install_report_sp.ps1 "Corporación Globex S.A."
+
+# Ejemplo 3: Uso posicional filtrando por prefijo '0-'
+.\cc_install_report_sp.ps1 "Corporación Globex S.A." "0-"
+
+# Ejemplo 4: Uso posicional recuperando TODO SIN FILTRO (Prefijo nulo "")
+.\cc_install_report_sp.ps1 "Corporación Globex S.A." ""
+
+# Ejemplo 5: Uso posicional especificando Cliente, Prefijo vacio (TODO) y Nombre de Reporte personalizado
+.\cc_install_report_sp.ps1 "Corporación Globex S.A." "" "C:\Reportes\Reporte_Globex_Completo.md"
+
+# Ejemplo 6: Uso con parametros nombrados y flags cortos (-c, -p, -o)
+.\cc_install_report_sp.ps1 -c "Corporación Globex S.A." -p "0-" -o "Reporte_Globex_0.md"
+
+# Ejemplo 7: Uso con parametros nombrados recuperando TODO sin filtro
+.\cc_install_report_sp.ps1 -ClientName "Corporación Globex S.A." -Prefix "" -OutputFile "Reporte_Globex_SinFiltro.md"
+
+
+--- BASH (cc_install_report_sp.sh) ---
+
+# Ejemplo 1: Ejecucion basica con valores por defecto
+./cc_install_report_sp.sh
+
+# Ejemplo 2: Usando flags cortos con prefijo '0-'
+./cc_install_report_sp.sh -c "Corporación Globex S.A." -p "0-"
+
+# Ejemplo 3: Usando flags cortos recuperando TODO SIN FILTRO (Prefijo nulo "")
+./cc_install_report_sp.sh -c "Corporación Globex S.A." -p ""
+
+# Ejemplo 4: Especificando Cliente, Prefijo vacio (TODO) y Nombre de Reporte personalizado
+./cc_install_report_sp.sh -c "Corporación Globex S.A." -p "" -o "/tmp/Reporte_Globex_Completo.md"
+
+# Ejemplo 5: Usando nombres largos de opciones (--client-name, --prefix, --output)
+./cc_install_report_sp.sh --client-name "Corporación Globex S.A." --prefix "0-" --output "Reporte_Globex_0.md"
+
+# Ejemplo 6: Opciones largas recuperando TODO sin filtro
+./cc_install_report_sp.sh --client-name "Corporación Globex S.A." --prefix "" --output "Reporte_Globex_SinFiltro.md"
+
+
+================================================================================
+4. ENGLISH EXAMPLES / EJEMPLOS EN INGLES
+================================================================================
+
+--- POWERSHELL (cc_install_report_en.ps1) ---
+
+# Example 1: Basic execution with defaults (ClientName = 'Client', Prefix = '0-')
+.\cc_install_report_en.ps1
+
+# Example 2: Positional usage with Customer Name and default prefix '0-'
+.\cc_install_report_en.ps1 "ACME Corp"
+
+# Example 3: Positional usage filtering by prefix '0-'
+.\cc_install_report_en.ps1 "ACME Corp" "0-"
+
+# Example 4: Positional usage retrieving ALL ITEMS WITHOUT FILTER (Empty prefix "")
+.\cc_install_report_en.ps1 "ACME Corp" ""
+
+# Example 5: Positional usage specifying Client, empty prefix (ALL), and custom report filename
+.\cc_install_report_en.ps1 "ACME Corp" "" "C:\Reports\ACME_Full_Report.md"
+
+# Example 6: Named parameters with short aliases (-c, -p, -o)
+.\cc_install_report_en.ps1 -c "ACME Corp" -p "0-" -o "ACME_Report_0.md"
+
+# Example 7: Full named parameters retrieving EVERYTHING without filter
+.\cc_install_report_en.ps1 -ClientName "ACME Corp" -Prefix "" -OutputFile "ACME_Full_Report.md"
+
+
+--- BASH (cc_install_report_en.sh) ---
+
+# Example 1: Basic execution with default parameters
+./cc_install_report_en.sh
+
+# Example 2: Short flags filtering by prefix '0-'
+./cc_install_report_en.sh -c "ACME Corp" -p "0-"
+
+# Example 3: Short flags retrieving ALL ITEMS WITHOUT FILTER (Empty prefix "")
+./cc_install_report_en.sh -c "ACME Corp" -p ""
+
+# Example 4: Specifying Customer Name, empty prefix (ALL), and custom output file
+./cc_install_report_en.sh -c "ACME Corp" -p "" -o "/tmp/ACME_Full_Report.md"
+
+# Example 5: Long option names (--client-name, --prefix, --output)
+./cc_install_report_en.sh --client-name "ACME Corp" --prefix "0-" --output "ACME_Report_0.md"
+
+# Example 6: Long options retrieving EVERYTHING without filter
+./cc_install_report_en.sh --client-name "ACME Corp" --prefix "" --output "ACME_Full_Report.md"
+
+================================================================================
