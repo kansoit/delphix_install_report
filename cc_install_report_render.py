@@ -16,16 +16,25 @@ DEFAULT_TEMPLATE = SCRIPT_DIR / "cc_install_report_sp.md"
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Render a normalized report with Knap.")
+    parser = argparse.ArgumentParser(
+        description="Render a normalized report with Knap.",
+        epilog=(
+            "Example:\n"
+            "  ./cc_install_report_render.py --data report-data/demo-client.json "
+            "--template cc_install_report_sp.md --output report-data/demo-client.md"
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
     parser.add_argument("-d", "--data", "--input", dest="data_file", required=True)
-    parser.add_argument("-o", "--output", "--output-file", dest="output_file")
-    parser.add_argument("-t", "--template", default=str(DEFAULT_TEMPLATE))
+    parser.add_argument("-o", "--output", "--output-file", dest="output_file", required=True)
+    parser.add_argument("-t", "--template", required=True)
+    if len(sys.argv) == 1:
+        parser.print_help()
+        raise SystemExit(0)
     return parser.parse_args()
 
 
-def resolve_output(path: str | None, client: str) -> Path:
-    if not path:
-        return SCRIPT_DIR / f"{client} - Reporte Configuracion Delphix Continuous Compliance.md"
+def resolve_output(path: str, client: str) -> Path:
     output = Path(path)
     if not output.is_absolute() and not path.startswith("./") and not path.startswith("../"):
         output = SCRIPT_DIR / output

@@ -118,9 +118,8 @@ Syntax:
 ./cc_install_report_fetch.py [options]
 ```
 
-It supports the same report parameters documented below. The page size can be
-set with `--page-size` or the `DCT_PAGE_SIZE` environment variable. The toolkit
-binary can be overridden with `DCT_TOOLKIT_BIN`.
+It supports the report parameters documented below. The toolkit binary can be
+overridden with `DCT_TOOLKIT_BIN`.
 
 Queries DCT, follows all available pages, applies filters, and generates normalized JSON. It does not generate Markdown and does not depend on Knap.
 
@@ -156,18 +155,10 @@ Parameters:
 | :--- | :--- |
 | `-c`, `--client CLIENT` | Client name included in the data and report. |
 | `-p`, `--prefix PREFIX` | Prefix used to filter algorithms, data classes, and classifiers. |
-| `-o`, `--output FILE.json` | Output path for the normalized JSON. Also accepts `--data-output`. |
-| `--profile-set NAME` | Include one Profile Set. May be repeated. |
-| `--profile-sets A,B` | Include multiple comma-separated Profile Sets. |
-| `--page-size N` | Number of records requested per DCT page. |
+| `-o`, `--output FILE.json` | Required output path for the normalized JSON. Also accepts `--data-output`. |
+| `--profile-set NAME` | Required Profile Set selection; may be repeated. Mutually exclusive with `--profile-sets`. |
+| `--profile-sets A,B` | Required comma-separated Profile Set selection. Mutually exclusive with `--profile-set`. |
 | `-h`, `--help` | Display help. |
-
-### Default Profile Sets
-
-If no Profile Set is specified, the following are included:
-
-- `AR - Ley 25.326 - v1`
-- `ASDD Spanish`
 
 To generate a report for only the Spanish Profile Set:
 
@@ -176,37 +167,25 @@ To generate a report for only the Spanish Profile Set:
   --client "Omarchy Test" \
   --prefix "0-" \
   --profile-set "ASDD Spanish" \
-  --output /tmp/report-data.json
+  --output report-data/omarchy-test.json
 ```
-
-### Automatic JSON filename
-
-When `-o` is omitted, the file is saved in a `report-data/` subdirectory next to the script:
-
-```text
-report-data/<client>-YYYYMMDD-HHMMSS.json
-```
-
-For example:
-
-```text
-report-data/Omarchy_Test-20261002-205014.json
-```
-
-Spaces and slashes in the client name are replaced to produce a safe filename.
 
 ### Pagination
 
 The fetcher does not limit the total number of results. It repeatedly queries DCT using `response_metadata.next_cursor` until all records have been retrieved.
 
-The page size can be adjusted without changing the final result:
+The fetcher uses an internal page size of `1000` and continues until DCT
+returns no next cursor; this is not a result limit.
 
 ```bash
-DCT_PAGE_SIZE=500 ./cc_install_report_fetch.py \
-  --profile-set "ASDD Spanish"
+./cc_install_report_fetch.py \
+  --client "Demo Client" \
+  --prefix "0-" \
+  --profile-set "ASDD Spanish" \
+  --output report-data/demo-client.json
 ```
 
-`DCT_PAGE_SIZE` controls only the size of each request; it is not a result limit.
+The page size controls only the size of each request; it is not a result limit.
 
 ## Renderer
 
@@ -226,9 +205,9 @@ Parameters:
 
 | Parameter | Description |
 | :--- | :--- |
-| `-d`, `--data FILE.json` | Input normalized JSON. Required. Also accepts `--input`. |
-| `-o`, `--output FILE.md` | Output Markdown file. Also accepts `--output-file`. |
-| `-t`, `--template FILE.md` | Template used for rendering. Defaults to `cc_install_report_sp.md`. |
+| `-d`, `--data FILE.json` | Required input normalized JSON. Also accepts `--input`. |
+| `-o`, `--output FILE.md` | Required output Markdown file. Also accepts `--output-file`. |
+| `-t`, `--template FILE.md` | Required template used for rendering. |
 | `-h`, `--help` | Display help. |
 
 Example:
@@ -275,6 +254,7 @@ To generate the final report directly:
   --client "Omarchy Test" \
   --prefix "0-" \
   --profile-set "ASDD Spanish" \
+  --template cc_install_report_sp.md \
   --output /tmp/final-report.md
 ```
 
@@ -298,6 +278,7 @@ To preserve the JSON for auditing or future regeneration, run the fetcher and re
 
 ./cc_install_report_render.py \
   --data report-data/demo-client.json \
+  --template cc_install_report_sp.md \
   --output "Demo Client - Reporte Configuracion Delphix Continuous Compliance.md"
 ```
 
@@ -306,6 +287,7 @@ This allows the Markdown to be regenerated multiple times without querying DCT a
 ```bash
 ./cc_install_report_render.py \
   --data report-data/demo-client.json \
+  --template cc_install_report_sp.md \
   --output /tmp/reviewed-report.md
 ```
 
@@ -314,16 +296,16 @@ This allows the Markdown to be regenerated multiple times without querying DCT a
 | Variable | Purpose | Default |
 | :--- | :--- | :--- |
 | `DCT_TOOLKIT_BIN` | Path to the `dct-toolkit` executable. | `~/.local/bin/dct-toolkit` |
-| `DCT_PAGE_SIZE` | Number of records requested per page. | `1000` |
 
 Example:
 
 ```bash
 DCT_TOOLKIT_BIN=/opt/dct-toolkit/bin/dct-toolkit \
-DCT_PAGE_SIZE=500 \
 ./cc_install_report_fetch.py \
   --client "Demo Client" \
-  --profile-set "ASDD Spanish"
+  --prefix "0-" \
+  --profile-set "ASDD Spanish" \
+  --output report-data/demo-client.json
 ```
 
 ## Quick checks
