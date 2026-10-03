@@ -25,9 +25,9 @@ def parse_args() -> argparse.Namespace:
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument("-d", "--data", "--input", dest="data_file", required=True)
-    parser.add_argument("-o", "--output", "--output-file", dest="output_file", required=True)
-    parser.add_argument("-t", "--template", required=True)
+    parser.add_argument("-d", "--data", "--input", dest="data_file", metavar="JSON_FILE", required=True)
+    parser.add_argument("-o", "--output", "--output-file", dest="output_file", metavar="MARKDOWN_FILE", required=True)
+    parser.add_argument("-t", "--template", metavar="TEMPLATE_FILE", required=True)
     if len(sys.argv) == 1:
         parser.print_help()
         raise SystemExit(0)

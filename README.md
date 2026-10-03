@@ -155,9 +155,8 @@ Parameters:
 | :--- | :--- |
 | `-c`, `--client CLIENT` | Client name included in the data and report. |
 | `-p`, `--prefix PREFIX` | Prefix used to filter algorithms, data classes, and classifiers. |
-| `-o`, `--output FILE.json` | Required output path for the normalized JSON. Also accepts `--data-output`. |
-| `--profile-set NAME` | Required Profile Set selection; may be repeated. Mutually exclusive with `--profile-sets`. |
-| `--profile-sets A,B` | Required comma-separated Profile Set selection. Mutually exclusive with `--profile-set`. |
+| `-o`, `--output FILE.json` | Required output path for the normalized JSON. |
+| `-s`, `--profile-set NAME` | Required Profile Set selection; may be repeated. |
 | `-h`, `--help` | Display help. |
 
 To generate a report for only the Spanish Profile Set:
