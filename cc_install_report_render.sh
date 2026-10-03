@@ -5,7 +5,21 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DATA_FILE=""
 OUTPUT_FILE=""
-TEMPLATE_FILE="${SCRIPT_DIR}/cc_install_report_sp.md"
+TEMPLATE_FILE=""
+
+if [[ $# -eq 0 ]]; then
+  cat <<'EOF'
+Uso: ./cc_install_report_render.sh [opciones]
+  -d, --data ARCHIVO.json       JSON normalizado de entrada (requerido).
+  -o, --output ARCHIVO.md       Markdown de salida (requerido).
+  -t, --template ARCHIVO.md     Plantilla de informe (requerido).
+
+Ejemplo:
+  ./cc_install_report_render.sh -d report-data/demo-client.json \
+    -t cc_install_report_sp.md -o report-data/demo-client.md
+EOF
+  exit 0
+fi
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -13,10 +27,16 @@ while [[ $# -gt 0 ]]; do
     -o|--output|--output-file) OUTPUT_FILE="$2"; shift 2 ;;
     -t|--template) TEMPLATE_FILE="$2"; shift 2 ;;
     -h|--help)
-      echo "Uso: $0 [opciones]"
-      echo "  -d, --data ARCHIVO.json       JSON normalizado de entrada."
-      echo "  -o, --output ARCHIVO.md       Markdown de salida."
-      echo "  -t, --template ARCHIVO.md     Plantilla de informe."
+      cat <<'EOF'
+Uso: ./cc_install_report_render.sh [opciones]
+  -d, --data ARCHIVO.json       JSON normalizado de entrada (requerido).
+  -o, --output ARCHIVO.md       Markdown de salida (requerido).
+  -t, --template ARCHIVO.md     Plantilla de informe (requerido).
+
+Ejemplo:
+  ./cc_install_report_render.sh -d report-data/demo-client.json \
+    -t cc_install_report_sp.md -o report-data/demo-client.md
+EOF
       exit 0
       ;;
     *) echo "Opción desconocida: $1" >&2; exit 1 ;;
@@ -24,6 +44,8 @@ while [[ $# -gt 0 ]]; do
 done
 
 [[ -n "${DATA_FILE}" ]] || { echo "ERROR: debe indicar el JSON con -d/--data." >&2; exit 1; }
+[[ -n "${OUTPUT_FILE}" ]] || { echo "ERROR: debe indicar el Markdown con -o/--output." >&2; exit 1; }
+[[ -n "${TEMPLATE_FILE}" ]] || { echo "ERROR: debe indicar la plantilla con -t/--template." >&2; exit 1; }
 [[ -f "${DATA_FILE}" ]] || { echo "ERROR: JSON no encontrado: ${DATA_FILE}" >&2; exit 1; }
 [[ -f "${TEMPLATE_FILE}" ]] || { echo "ERROR: plantilla no encontrada: ${TEMPLATE_FILE}" >&2; exit 1; }
 command -v jq >/dev/null || { echo "ERROR: jq no está instalado." >&2; exit 1; }

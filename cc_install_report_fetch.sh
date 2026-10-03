@@ -2,15 +2,30 @@
 
 set -euo pipefail
 
-CLIENT_NAME="Cliente"
-PREFIX="0-"
+CLIENT_NAME=""
+PREFIX=""
 DATA_FILE=""
-PAGE_SIZE="${DCT_PAGE_SIZE:-1000}"
+PAGE_SIZE=1000
 DCT_TOOLKIT_BIN="${DCT_TOOLKIT_BIN:-${HOME}/.local/bin/dct-toolkit}"
-# Profile Sets incluidos deliberadamente en el informe. Agregar nombres aquí
-# permite ampliar el alcance sin tocar la plantilla.
 PROFILE_SET_ALLOWLIST=()
 PROFILE_SET_EXPLICIT=false
+
+if [[ $# -eq 0 ]]; then
+  cat <<'EOF'
+Uso: ./cc_install_report_fetch.sh [opciones]
+  -c, --client CLIENTE                  Nombre del cliente (requerido).
+  -p, --prefix PREFIJO                  Prefijo de filtrado (requerido).
+  -o, --output ARCHIVO.json             JSON normalizado de salida (requerido).
+      --profile-set NOMBRE              Profile Set; puede repetirse.
+      --profile-sets NOMBRE1,NOMBRE2   Profile Sets separados por comas.
+  La selección de Profile Set es requerida y ambas opciones son excluyentes.
+
+Ejemplo:
+  ./cc_install_report_fetch.sh -c "Demo Client" -p "0-" \
+    --profile-set "ASDD Spanish" -o report-data/demo-client.json
+EOF
+  exit 0
+fi
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -28,30 +43,32 @@ while [[ $# -gt 0 ]]; do
       shift 2
       ;;
     -h|--help)
-      echo "Uso: $0 [opciones]"
-      echo "  -c, --client CLIENTE                  Nombre del cliente."
-      echo "  -p, --prefix PREFIJO                  Prefijo de filtrado."
-      echo "  -o, --output ARCHIVO.json             JSON normalizado de salida."
-      echo "      --profile-set NOMBRE              Profile Set; puede repetirse."
-      echo "      --profile-sets NOMBRE1,NOMBRE2   Profile Sets separados por comas."
-      echo "  Genera los datos normalizados para el renderer."
+      cat <<'EOF'
+Uso: ./cc_install_report_fetch.sh [opciones]
+  -c, --client CLIENTE                  Nombre del cliente (requerido).
+  -p, --prefix PREFIJO                  Prefijo de filtrado (requerido).
+  -o, --output ARCHIVO.json             JSON normalizado de salida (requerido).
+      --profile-set NOMBRE              Profile Set; puede repetirse.
+      --profile-sets NOMBRE1,NOMBRE2   Profile Sets separados por comas.
+  La selección de Profile Set es requerida y ambas opciones son excluyentes.
+
+Ejemplo:
+  ./cc_install_report_fetch.sh -c "Demo Client" -p "0-" \
+    --profile-set "ASDD Spanish" -o report-data/demo-client.json
+EOF
       exit 0
       ;;
     *) echo "Opción desconocida: $1" >&2; exit 1 ;;
   esac
 done
 
-if [[ "${PROFILE_SET_EXPLICIT}" == false ]]; then
-  PROFILE_SET_ALLOWLIST=("AR - Ley 25.326 - v1" "ASDD Spanish")
-fi
+[[ -n "${CLIENT_NAME}" ]] || { echo "ERROR: debe indicar --client." >&2; exit 1; }
+[[ -n "${PREFIX}" ]] || { echo "ERROR: debe indicar --prefix." >&2; exit 1; }
+[[ -n "${DATA_FILE}" ]] || { echo "ERROR: debe indicar --output." >&2; exit 1; }
+[[ "${PROFILE_SET_EXPLICIT}" == true ]] || { echo "ERROR: debe indicar --profile-set o --profile-sets." >&2; exit 1; }
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-if [[ -z "${DATA_FILE}" ]]; then
-  DATA_DIR="${SCRIPT_DIR}/report-data"
-  mkdir -p "${DATA_DIR}"
-  SAFE_CLIENT_NAME="$(printf '%s' "${CLIENT_NAME}" | tr ' /' '__' | tr -cd '[:alnum:]_.-')"
-  DATA_FILE="${DATA_DIR}/${SAFE_CLIENT_NAME}-$(date '+%Y%m%d-%H%M%S').json"
-elif [[ "${DATA_FILE}" != /* && "${DATA_FILE}" != ./* && "${DATA_FILE}" != ../* ]]; then
+if [[ "${DATA_FILE}" != /* && "${DATA_FILE}" != ./* && "${DATA_FILE}" != ../* ]]; then
   DATA_FILE="${SCRIPT_DIR}/${DATA_FILE}"
 fi
 
