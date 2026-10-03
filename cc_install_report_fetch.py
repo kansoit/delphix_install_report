@@ -161,10 +161,9 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("-c", "--client", "--client-name", required=True)
     parser.add_argument("-p", "--prefix", required=True)
-    parser.add_argument("-o", "--output", "--data-output", dest="data_file", required=True)
-    profile_group = parser.add_mutually_exclusive_group(required=True)
-    profile_group.add_argument("--profile-set", action="append", dest="profile_sets")
-    profile_group.add_argument("--profile-sets", dest="profile_sets_csv")
+    parser.add_argument("-o", "--output", dest="data_file", metavar="JSON_FILE", required=True)
+    parser.add_argument("--data-output", dest="data_file", help=argparse.SUPPRESS)
+    parser.add_argument("-s", "--profile-set", action="append", dest="profile_sets", metavar="PROFILE_SET", required=True)
     if len(sys.argv) == 1:
         parser.print_help()
         raise SystemExit(0)
@@ -177,10 +176,7 @@ def main() -> int:
     if not os.access(binary, os.X_OK):
         print(f"ERROR: Toolkit not found or not executable: {binary}", file=sys.stderr)
         return 1
-    if args.profile_sets is not None:
-        allowed_profiles = args.profile_sets
-    else:
-        allowed_profiles = [item.strip() for item in args.profile_sets_csv.split(",")]
+    allowed_profiles = args.profile_sets
 
     script_dir = Path(__file__).resolve().parent
     data_file = Path(args.data_file)

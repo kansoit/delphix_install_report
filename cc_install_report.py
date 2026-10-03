@@ -28,11 +28,9 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("-c", "--client", "--client-name", required=True)
     parser.add_argument("-p", "--prefix", required=True)
-    parser.add_argument("-o", "--output", "--output-file", dest="output_file", required=True)
+    parser.add_argument("-o", "--output", "--output-file", dest="output_file", metavar="MARKDOWN_FILE", required=True)
     parser.add_argument("-t", "--template", required=True)
-    profile_group = parser.add_mutually_exclusive_group(required=True)
-    profile_group.add_argument("--profile-set", action="append", dest="profile_sets")
-    profile_group.add_argument("--profile-sets", dest="profile_sets_csv")
+    parser.add_argument("-s", "--profile-set", action="append", dest="profile_sets", metavar="PROFILE_SET", required=True)
     if len(sys.argv) == 1:
         parser.print_help()
         raise SystemExit(0)
@@ -45,8 +43,6 @@ def main() -> int:
 
     for profile_set in args.profile_sets or []:
         fetch_args.extend(["--profile-set", profile_set])
-    if args.profile_sets_csv is not None:
-        fetch_args.extend(["--profile-sets", args.profile_sets_csv])
     try:
         with tempfile.NamedTemporaryFile(
             prefix="cc-install-", suffix=".report-data.json", delete=True
