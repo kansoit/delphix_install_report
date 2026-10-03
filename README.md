@@ -204,7 +204,7 @@ Parameters:
 
 | Parameter | Description |
 | :--- | :--- |
-| `-d`, `-i`, `--data FILE.json` | Required input normalized JSON. Also accepts `--input`. |
+| `-i`, `--input FILE.json` | Required input normalized JSON. |
 | `-o`, `--output FILE.md` | Required output Markdown file. Also accepts `--output-file`. |
 | `-t`, `--template FILE.md` | Required template used for rendering. |
 | `-h`, `--help` | Display help. |
@@ -213,7 +213,7 @@ Example:
 
 ```bash
 ./cc_install_report_render.py \
-  --data /tmp/report-data.json \
+  --input /tmp/report-data.json \
   --output /tmp/report.md
 ```
 
@@ -221,12 +221,12 @@ Render in Portuguese or English by selecting the template explicitly:
 
 ```bash
 ./cc_install_report_render.py \
-  --data /tmp/report-data.json \
+  --input /tmp/report-data.json \
   --template cc_install_report_pt.md \
   --output /tmp/report-pt.md
 
 ./cc_install_report_render.py \
-  --data /tmp/report-data.json \
+  --input /tmp/report-data.json \
   --template cc_install_report_en.md \
   --output /tmp/report-en.md
 ```
@@ -276,7 +276,7 @@ To preserve the JSON for auditing or future regeneration, run the fetcher and re
   --output report-data/demo-client.json
 
 ./cc_install_report_render.py \
-  --data report-data/demo-client.json \
+  --input report-data/demo-client.json \
   --template cc_install_report_sp.md \
   --output "Demo Client - Reporte Configuracion Delphix Continuous Compliance.md"
 ```
@@ -285,7 +285,7 @@ This allows the Markdown to be regenerated multiple times without querying DCT a
 
 ```bash
 ./cc_install_report_render.py \
-  --data report-data/demo-client.json \
+  --input report-data/demo-client.json \
   --template cc_install_report_sp.md \
   --output /tmp/reviewed-report.md
 ```
