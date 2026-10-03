@@ -17,14 +17,25 @@ RENDER_SCRIPT = SCRIPT_DIR / "cc_install_report_render.py"
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Recolecta datos desde DCT y genera el reporte Markdown."
+        description="Recolecta datos desde DCT y genera el reporte Markdown.",
+        epilog=(
+            "Example:\n"
+            "  ./cc_install_report.py -c \"Demo Client\" -p \"0-\" "
+            "--profile-set \"ASDD Spanish\" "
+            "-t cc_install_report_sp.md -o report-data/demo-client.md"
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument("-c", "--client", "--client-name", default="Cliente")
-    parser.add_argument("-p", "--prefix", default="0-")
-    parser.add_argument("-o", "--output", "--output-file", dest="output_file")
-    parser.add_argument("--profile-set", action="append", dest="profile_sets")
-    parser.add_argument("--profile-sets", dest="profile_sets_csv")
-    parser.add_argument("--page-size", type=int)
+    parser.add_argument("-c", "--client", "--client-name", required=True)
+    parser.add_argument("-p", "--prefix", required=True)
+    parser.add_argument("-o", "--output", "--output-file", dest="output_file", required=True)
+    parser.add_argument("-t", "--template", required=True)
+    profile_group = parser.add_mutually_exclusive_group(required=True)
+    profile_group.add_argument("--profile-set", action="append", dest="profile_sets")
+    profile_group.add_argument("--profile-sets", dest="profile_sets_csv")
+    if len(sys.argv) == 1:
+        parser.print_help()
+        raise SystemExit(0)
     return parser.parse_args()
 
 
@@ -36,9 +47,6 @@ def main() -> int:
         fetch_args.extend(["--profile-set", profile_set])
     if args.profile_sets_csv is not None:
         fetch_args.extend(["--profile-sets", args.profile_sets_csv])
-    if args.page_size is not None:
-        fetch_args.extend(["--page-size", str(args.page_size)])
-
     try:
         with tempfile.NamedTemporaryFile(
             prefix="cc-install-", suffix=".report-data.json", delete=True
@@ -49,9 +57,12 @@ def main() -> int:
                 check=True,
             )
 
-            render_args = [str(RENDER_SCRIPT), "--data", str(temporary_data_path)]
-            if args.output_file is not None:
-                render_args.extend(["--output", args.output_file])
+            render_args = [
+                str(RENDER_SCRIPT),
+                "--data", str(temporary_data_path),
+                "--template", args.template,
+                "--output", args.output_file,
+            ]
             subprocess.run(render_args, check=True)
     except (OSError, subprocess.CalledProcessError) as exc:
         print(f"ERROR: no se pudo generar el reporte: {exc}", file=sys.stderr)

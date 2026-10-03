@@ -15,8 +15,8 @@ from pathlib import Path
 from typing import Any
 
 
-DEFAULT_PROFILE_SETS = ("AR - Ley 25.326 - v1", "ASDD Spanish")
 FETCH_WORKERS = 4
+PAGE_SIZE = 1000
 
 
 def text(value: Any, fallback: str = "-") -> str:
@@ -149,13 +149,25 @@ def safe_client_name(client: str) -> str:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Collect and normalize Delphix DCT data.")
-    parser.add_argument("-c", "--client", "--client-name", default="Cliente")
-    parser.add_argument("-p", "--prefix", default="0-")
-    parser.add_argument("-o", "--output", "--data-output", dest="data_file")
-    parser.add_argument("--profile-set", action="append", dest="profile_sets")
-    parser.add_argument("--profile-sets", dest="profile_sets_csv")
-    parser.add_argument("--page-size", type=int, default=int(os.environ.get("DCT_PAGE_SIZE", "1000")))
+    parser = argparse.ArgumentParser(
+        description="Collect and normalize Delphix DCT data.",
+        epilog=(
+            "Example:\n"
+            "  ./cc_install_report_fetch.py -c \"Demo Client\" -p \"0-\" "
+            "--profile-set \"ASDD Spanish\" "
+            "-o report-data/demo-client.json"
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument("-c", "--client", "--client-name", required=True)
+    parser.add_argument("-p", "--prefix", required=True)
+    parser.add_argument("-o", "--output", "--data-output", dest="data_file", required=True)
+    profile_group = parser.add_mutually_exclusive_group(required=True)
+    profile_group.add_argument("--profile-set", action="append", dest="profile_sets")
+    profile_group.add_argument("--profile-sets", dest="profile_sets_csv")
+    if len(sys.argv) == 1:
+        parser.print_help()
+        raise SystemExit(0)
     return parser.parse_args()
 
 
@@ -165,27 +177,19 @@ def main() -> int:
     if not os.access(binary, os.X_OK):
         print(f"ERROR: Toolkit not found or not executable: {binary}", file=sys.stderr)
         return 1
-    if args.page_size < 1:
-        print("ERROR: page size must be greater than zero.", file=sys.stderr)
-        return 1
-
     if args.profile_sets is not None:
         allowed_profiles = args.profile_sets
-    elif args.profile_sets_csv is not None:
-        allowed_profiles = [item.strip() for item in args.profile_sets_csv.split(",")]
     else:
-        allowed_profiles = list(DEFAULT_PROFILE_SETS)
+        allowed_profiles = [item.strip() for item in args.profile_sets_csv.split(",")]
 
     script_dir = Path(__file__).resolve().parent
-    data_file = Path(args.data_file) if args.data_file else (
-        script_dir / "report-data" / f"{safe_client_name(args.client)}-{datetime.now():%Y%m%d-%H%M%S}.json"
-    )
+    data_file = Path(args.data_file)
     if not data_file.is_absolute():
         data_file = script_dir / data_file
     data_file.parent.mkdir(parents=True, exist_ok=True)
 
     try:
-        dct = DCTClient(binary, args.page_size)
+        dct = DCTClient(binary, PAGE_SIZE)
         print("[+] Collecting JSON data from DCT...")
         initial_calls = [
             ("paged", "get_registered_engines"),
