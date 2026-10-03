@@ -204,7 +204,7 @@ Parameters:
 
 | Parameter | Description |
 | :--- | :--- |
-| `-d`, `--data FILE.json` | Required input normalized JSON. Also accepts `--input`. |
+| `-d`, `-i`, `--data FILE.json` | Required input normalized JSON. Also accepts `--input`. |
 | `-o`, `--output FILE.md` | Required output Markdown file. Also accepts `--output-file`. |
 | `-t`, `--template FILE.md` | Required template used for rendering. |
 | `-h`, `--help` | Display help. |
