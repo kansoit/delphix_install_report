@@ -229,10 +229,10 @@ To generate a report for only the Spanish Profile Set:
 
 ```bash
 ./cc_install_report_fetch.py \
-  --client "Omarchy Test" \
+  --client "ACME Corp" \
   --prefix "0-" \
   --profile-set "ASDD Spanish" \
-  --output report-data/omarchy-test.json
+  --output report-data/acme-corp.json
 ```
 
 ### Pagination
@@ -244,10 +244,10 @@ returns no next cursor; this is not a result limit.
 
 ```bash
 ./cc_install_report_fetch.py \
-  --client "Demo Client" \
+  --client "ACME Corp" \
   --prefix "0-" \
   --profile-set "ASDD Spanish" \
-  --output report-data/demo-client.json
+  --output report-data/acme-corp.json
 ```
 
 The page size controls only the size of each request; it is not a result limit.
@@ -332,22 +332,22 @@ To preserve the JSON for auditing or future regeneration, run the fetcher and re
 
 ```bash
 ./cc_install_report_fetch.py \
-  --client "Demo Client" \
+  --client "ACME Corp" \
   --prefix "0-" \
   --profile-set "ASDD Spanish" \
-  --output report-data/demo-client.json
+  --output report-data/acme-corp.json
 
 ./cc_install_report_render.py \
-  --input report-data/demo-client.json \
+  --input report-data/acme-corp.json \
   --template cc_install_report_sp.md \
-  --output "Demo Client - Reporte Configuracion Delphix Continuous Compliance.md"
+  --output "ACME Corp - Reporte Configuracion Delphix Continuous Compliance.md"
 ```
 
 This allows the Markdown to be regenerated multiple times without querying DCT again:
 
 ```bash
 ./cc_install_report_render.py \
-  --input report-data/demo-client.json \
+  --input report-data/acme-corp.json \
   --template cc_install_report_sp.md \
   --output /tmp/reviewed-report.md
 ```
@@ -363,10 +363,10 @@ Example:
 ```bash
 DCT_TOOLKIT_BIN=/opt/dct-toolkit/bin/dct-toolkit \
 ./cc_install_report_fetch.py \
-  --client "Demo Client" \
+  --client "ACME Corp" \
   --prefix "0-" \
   --profile-set "ASDD Spanish" \
-  --output report-data/demo-client.json
+  --output report-data/acme-corp.json
 ```
 
 ## Quick checks
@@ -388,7 +388,7 @@ knap validate cc_install_report_sp.md
 Validate a generated JSON file:
 
 ```bash
-python3 -m json.tool report-data/demo-client.json >/dev/null
+python3 -m json.tool report-data/acme-corp.json >/dev/null
 ```
 
 Compare two reports:
