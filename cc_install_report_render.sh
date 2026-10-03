@@ -15,8 +15,8 @@ Uso: ./cc_install_report_render.sh [opciones]
   -t, --template ARCHIVO.md     Plantilla de informe (requerido).
 
 Ejemplo:
-  ./cc_install_report_render.sh -i report-data/demo-client.json \
-    -t cc_install_report_sp.md -o report-data/demo-client.md
+  ./cc_install_report_render.sh -i ACME_Corp_20261003-115138.json \
+    -o "ACME_Corp_$(date +%Y%m%d-%H%M%S).md" -t "cc_install_report_sp.md"
 EOF
   exit 0
 fi
@@ -34,8 +34,8 @@ Uso: ./cc_install_report_render.sh [opciones]
   -t, --template ARCHIVO.md     Plantilla de informe (requerido).
 
 Ejemplo:
-  ./cc_install_report_render.sh -i report-data/demo-client.json \
-    -t cc_install_report_sp.md -o report-data/demo-client.md
+  ./cc_install_report_render.sh -i ACME_Corp_20261003-115138.json \
+    -o "ACME_Corp_$(date +%Y%m%d-%H%M%S).md" -t "cc_install_report_sp.md"
 EOF
       exit 0
       ;;
