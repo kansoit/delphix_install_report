@@ -30,7 +30,7 @@ fi
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    -c|--client|--client-name) CLIENT_NAME="$2"; shift 2 ;;
+    -c|--client) CLIENT_NAME="$2"; shift 2 ;;
     -p|--prefix) PREFIX="$2"; shift 2 ;;
     -o|--output|--data-output) DATA_FILE="$2"; shift 2 ;;
     -s|--profile-set)

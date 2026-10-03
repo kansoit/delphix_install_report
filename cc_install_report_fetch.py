@@ -161,7 +161,7 @@ def parse_args() -> argparse.Namespace:
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument("-c", "--client", "--client-name", required=True)
+    parser.add_argument("-c", "--client", required=True)
     parser.add_argument("-p", "--prefix", required=True)
     parser.add_argument("-o", "--output", dest="data_file", metavar="JSON_FILE", required=True)
     parser.add_argument("--data-output", dest="data_file", help=argparse.SUPPRESS)

@@ -31,7 +31,7 @@ fi
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    -c|--client|--client-name) FETCH_ARGS+=("$1" "$2"); CLIENT_SET=true; shift 2 ;;
+    -c|--client) FETCH_ARGS+=("$1" "$2"); CLIENT_SET=true; shift 2 ;;
     -p|--prefix) FETCH_ARGS+=("$1" "$2"); PREFIX_SET=true; shift 2 ;;
     -s|--profile-set) FETCH_ARGS+=("$1" "$2"); PROFILE_SET_SET=true; shift 2 ;;
     -t|--template) TEMPLATE_FILE="$2"; shift 2 ;;
