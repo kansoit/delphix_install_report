@@ -12,13 +12,13 @@ PROFILE_SET_EXPLICIT=false
 
 if [[ $# -eq 0 ]]; then
   cat <<'EOF'
-Uso: ./cc_install_report_fetch.sh [opciones]
-  -c, --client CLIENTE                  Nombre del cliente (requerido).
-  -p, --prefix PREFIJO                  Prefijo de filtrado (requerido).
-  -o, --output ARCHIVO.json             JSON normalizado de salida (requerido).
-  -s, --profile-set NOMBRE              Profile Set; puede repetirse.
+Usage: ./cc_install_report_fetch.sh [options]
+  -c, --client CLIENT                   Client name (required).
+  -p, --prefix PREFIX                   Filter prefix (required).
+  -o, --output FILE.json                Normalized JSON output (required).
+  -s, --profile-set NAME                Profile Set; may be repeated.
 
-Ejemplo:
+Example:
   ./cc_install_report_fetch.sh \
     -c "ACME Corp" \
     -p "0-" \
@@ -40,13 +40,13 @@ while [[ $# -gt 0 ]]; do
       ;;
     -h|--help)
       cat <<'EOF'
-Uso: ./cc_install_report_fetch.sh [opciones]
-  -c, --client CLIENTE                  Nombre del cliente (requerido).
-  -p, --prefix PREFIJO                  Prefijo de filtrado (requerido).
-  -o, --output ARCHIVO.json             JSON normalizado de salida (requerido).
-  -s, --profile-set NOMBRE              Profile Set; puede repetirse.
+Usage: ./cc_install_report_fetch.sh [options]
+  -c, --client CLIENT                   Client name (required).
+  -p, --prefix PREFIX                   Filter prefix (required).
+  -o, --output FILE.json                Normalized JSON output (required).
+  -s, --profile-set NAME                Profile Set; may be repeated.
 
-Ejemplo:
+Example:
   ./cc_install_report_fetch.sh \
     -c "ACME Corp" \
     -p "0-" \
@@ -55,22 +55,22 @@ Ejemplo:
 EOF
       exit 0
       ;;
-    *) echo "Opción desconocida: $1" >&2; exit 1 ;;
+    *) echo "Unknown option: $1" >&2; exit 1 ;;
   esac
 done
 
-[[ -n "${CLIENT_NAME}" ]] || { echo "ERROR: debe indicar --client." >&2; exit 1; }
-[[ -n "${PREFIX}" ]] || { echo "ERROR: debe indicar --prefix." >&2; exit 1; }
-[[ -n "${DATA_FILE}" ]] || { echo "ERROR: debe indicar --output." >&2; exit 1; }
-[[ "${PROFILE_SET_EXPLICIT}" == true ]] || { echo "ERROR: debe indicar --profile-set." >&2; exit 1; }
+[[ -n "${CLIENT_NAME}" ]] || { echo "ERROR: --client is required." >&2; exit 1; }
+[[ -n "${PREFIX}" ]] || { echo "ERROR: --prefix is required." >&2; exit 1; }
+[[ -n "${DATA_FILE}" ]] || { echo "ERROR: --output is required." >&2; exit 1; }
+[[ "${PROFILE_SET_EXPLICIT}" == true ]] || { echo "ERROR: --profile-set is required." >&2; exit 1; }
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if [[ "${DATA_FILE}" != /* && "${DATA_FILE}" != ./* && "${DATA_FILE}" != ../* ]]; then
   DATA_FILE="${SCRIPT_DIR}/${DATA_FILE}"
 fi
 
-[[ -x "${DCT_TOOLKIT_BIN}" ]] || { echo "ERROR: Toolkit no encontrado: ${DCT_TOOLKIT_BIN}" >&2; exit 1; }
-command -v jq >/dev/null || { echo "ERROR: jq no está instalado." >&2; exit 1; }
+[[ -x "${DCT_TOOLKIT_BIN}" ]] || { echo "ERROR: toolkit not found: ${DCT_TOOLKIT_BIN}" >&2; exit 1; }
+command -v jq >/dev/null || { echo "ERROR: jq is not installed." >&2; exit 1; }
 mkdir -p "$(dirname "${DATA_FILE}")"
 
 TMP_DIR="$(mktemp -d)"
@@ -106,14 +106,14 @@ run_json_paged() {
     jq -c '.items[]?' <<<"${raw_json}" >> "${ndjson}"
     next_cursor=$(jq -r '.response_metadata.next_cursor // empty' <<<"${raw_json}")
     [[ -n "${next_cursor}" && "${next_cursor}" != "${cursor}" ]] || break
-    [[ "${page}" -lt 10000 ]] || { echo "ERROR: demasiadas páginas en ${name}" >&2; return 1; }
+    [[ "${page}" -lt 10000 ]] || { echo "ERROR: too many pages for ${name}" >&2; return 1; }
     cursor="${next_cursor}"
   done
 
   jq -s '{items: .}' "${ndjson}" > "${output}"
 }
 
-printf '[+] Recolectando datos JSON desde DCT...\n'
+printf '[+] Collecting JSON data from DCT...\n'
 run_json_paged engines get_registered_engines
 run_json_once smtp get_smtp_config
 run_json_once ldap get_ldap_config
@@ -265,4 +265,4 @@ jq -n \
   }
 ' > "${DATA_FILE}"
 
-printf '[+] Datos normalizados generados en: %s\n' "${DATA_FILE}"
+printf '[+] Normalized data generated at: %s\n' "${DATA_FILE}"

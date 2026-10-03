@@ -14,14 +14,14 @@ PROFILE_SET_SET=false
 
 if [[ $# -eq 0 ]]; then
   cat <<'EOF'
-Uso: ./cc_install_report.sh [opciones]
-  -c, --client CLIENTE                  Nombre del cliente (requerido).
-  -p, --prefix PREFIJO                  Prefijo de filtrado (requerido).
-  -o, --output ARCHIVO.md               Markdown de salida (requerido).
-  -t, --template ARCHIVO.md             Plantilla de informe (requerida).
-  -s, --profile-set NOMBRE              Profile Set; puede repetirse.
+Usage: ./cc_install_report.sh [options]
+  -c, --client CLIENT                   Client name (required).
+  -p, --prefix PREFIX                   Filter prefix (required).
+  -o, --output FILE.md                  Markdown output (required).
+  -t, --template FILE.md                Report template (required).
+  -s, --profile-set NAME                Profile Set; may be repeated.
 
-Ejemplo:
+Example:
   ./cc_install_report.sh \
     -c "ACME Corp" \
     -p "0-" \
@@ -40,14 +40,14 @@ while [[ $# -gt 0 ]]; do
     -t|--template) TEMPLATE_FILE="$2"; shift 2 ;;
     -h|--help)
       cat <<'EOF'
-Uso: ./cc_install_report.sh [opciones]
-  -c, --client CLIENTE                  Nombre del cliente (requerido).
-  -p, --prefix PREFIJO                  Prefijo de filtrado (requerido).
-  -o, --output ARCHIVO.md               Markdown de salida (requerido).
-  -t, --template ARCHIVO.md             Plantilla de informe (requerida).
-  -s, --profile-set NOMBRE              Profile Set; puede repetirse.
+Usage: ./cc_install_report.sh [options]
+  -c, --client CLIENT                   Client name (required).
+  -p, --prefix PREFIX                   Filter prefix (required).
+  -o, --output FILE.md                  Markdown output (required).
+  -t, --template FILE.md                Report template (required).
+  -s, --profile-set NAME                Profile Set; may be repeated.
 
-Ejemplo:
+Example:
   ./cc_install_report.sh \
     -c "ACME Corp" \
     -p "0-" \
@@ -62,11 +62,11 @@ EOF
   esac
 done
 
-[[ "${CLIENT_SET}" == true ]] || { echo "ERROR: debe indicar --client." >&2; exit 1; }
-[[ "${PREFIX_SET}" == true ]] || { echo "ERROR: debe indicar --prefix." >&2; exit 1; }
-[[ "${PROFILE_SET_SET}" == true ]] || { echo "ERROR: debe indicar --profile-set." >&2; exit 1; }
-[[ -n "${OUTPUT_FILE}" ]] || { echo "ERROR: debe indicar --output." >&2; exit 1; }
-[[ -n "${TEMPLATE_FILE}" ]] || { echo "ERROR: debe indicar --template." >&2; exit 1; }
+[[ "${CLIENT_SET}" == true ]] || { echo "ERROR: --client is required." >&2; exit 1; }
+[[ "${PREFIX_SET}" == true ]] || { echo "ERROR: --prefix is required." >&2; exit 1; }
+[[ "${PROFILE_SET_SET}" == true ]] || { echo "ERROR: --profile-set is required." >&2; exit 1; }
+[[ -n "${OUTPUT_FILE}" ]] || { echo "ERROR: --output is required." >&2; exit 1; }
+[[ -n "${TEMPLATE_FILE}" ]] || { echo "ERROR: --template is required." >&2; exit 1; }
 
 DATA_FILE="$(mktemp --suffix=.report-data.json)"
 trap 'rm -f "${DATA_FILE}"' EXIT

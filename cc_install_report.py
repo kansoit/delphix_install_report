@@ -17,7 +17,7 @@ RENDER_SCRIPT = SCRIPT_DIR / "cc_install_report_render.py"
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Recolecta datos desde DCT y genera el reporte Markdown.",
+        description="Collects data from DCT and generates the Markdown report.",
         epilog=(
             "Example:\n"
             "  ./cc_install_report.py \\\n"
@@ -64,7 +64,7 @@ def main() -> int:
             ]
             subprocess.run(render_args, check=True)
     except (OSError, subprocess.CalledProcessError) as exc:
-        print(f"ERROR: no se pudo generar el reporte: {exc}", file=sys.stderr)
+        print(f"ERROR: could not generate the report: {exc}", file=sys.stderr)
         return 1
 
     return 0

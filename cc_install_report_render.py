@@ -48,22 +48,22 @@ def main() -> int:
     template_file = Path(args.template)
 
     if not data_file.is_file():
-        print(f"ERROR: JSON no encontrado: {data_file}", file=sys.stderr)
+        print(f"ERROR: JSON file not found: {data_file}", file=sys.stderr)
         return 1
     if not template_file.is_file():
-        print(f"ERROR: plantilla no encontrada: {template_file}", file=sys.stderr)
+        print(f"ERROR: template not found: {template_file}", file=sys.stderr)
         return 1
     if shutil.which("knap") is None:
-        print("ERROR: knap no está instalado.", file=sys.stderr)
+        print("ERROR: knap is not installed.", file=sys.stderr)
         return 1
 
     try:
         with data_file.open(encoding="utf-8") as handle:
             data = json.load(handle)
         if not isinstance(data, dict):
-            raise ValueError("el JSON raíz debe ser un objeto")
+            raise ValueError("the root JSON value must be an object")
     except (OSError, json.JSONDecodeError, ValueError) as exc:
-        print(f"ERROR: JSON inválido: {data_file}: {exc}", file=sys.stderr)
+        print(f"ERROR: invalid JSON: {data_file}: {exc}", file=sys.stderr)
         return 1
 
     client = data.get("client") or "Cliente"
@@ -79,10 +79,10 @@ def main() -> int:
         with output_file.open("a", encoding="utf-8") as handle:
             handle.write("\n")
     except (OSError, subprocess.CalledProcessError) as exc:
-        print(f"ERROR: no se pudo generar el reporte: {exc}", file=sys.stderr)
+        print(f"ERROR: could not generate the report: {exc}", file=sys.stderr)
         return 1
 
-    print(f"[+] Reporte Markdown generado en: {output_file}")
+    print(f"[+] Markdown report generated at: {output_file}")
     return 0
 
 
