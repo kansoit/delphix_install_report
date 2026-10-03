@@ -20,12 +20,12 @@ def parse_args() -> argparse.Namespace:
         description="Render a normalized report with Knap.",
         epilog=(
             "Example:\n"
-            "  ./cc_install_report_render.py --data report-data/demo-client.json "
+            "  ./cc_install_report_render.py --input report-data/demo-client.json "
             "--template cc_install_report_sp.md --output report-data/demo-client.md"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument("-d", "-i", "--data", "--input", dest="data_file", metavar="JSON_FILE", required=True)
+    parser.add_argument("-i", "--input", dest="data_file", metavar="JSON_FILE", required=True)
     parser.add_argument("-o", "--output", "--output-file", dest="output_file", metavar="MARKDOWN_FILE", required=True)
     parser.add_argument("-t", "--template", metavar="TEMPLATE_FILE", required=True)
     if len(sys.argv) == 1:

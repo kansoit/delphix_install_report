@@ -55,7 +55,7 @@ def main() -> int:
 
             render_args = [
                 str(RENDER_SCRIPT),
-                "--data", str(temporary_data_path),
+                "--input", str(temporary_data_path),
                 "--template", args.template,
                 "--output", args.output_file,
             ]
