@@ -16,72 +16,138 @@ Three equivalent templates are provided:
 
 ## Installation
 
-This section currently covers the Knap prerequisite only. The project repository installation procedure will be added once the GitHub repository is defined.
+This section documents the runtime prerequisites. The report host may be
+isolated from the Internet, but it still needs network access to the private
+DCT endpoint.
 
-### Online installation
+### Online installation on RHEL 9.8
 
-Knap requires Node.js 20 or later. Verify the runtime first:
+Knap requires Node.js 20 or later and npm. First check whether a suitable
+module stream is already available:
+
+```bash
+sudo dnf module list nodejs
+```
+
+If RHEL provides a Node.js 20 or newer stream through the configured
+repositories, install it directly. For the Node.js 20 stream:
+
+```bash
+sudo dnf module install -y nodejs:20
+```
+
+If the required stream is not available, use the official Node.js LTS binary
+bundle. Replace `NODE_VERSION` with the approved current LTS version:
+
+```bash
+NODE_VERSION=24.21.0
+NODE_ARCHIVE="node-v${NODE_VERSION}-linux-x64.tar.xz"
+
+curl -fLO "https://nodejs.org/dist/v${NODE_VERSION}/${NODE_ARCHIVE}"
+sudo mkdir -p /opt/node
+sudo tar -xJf "${NODE_ARCHIVE}" -C /opt/node
+sudo ln -sfn "/opt/node/node-v${NODE_VERSION}-linux-x64" /opt/node/current
+sudo ln -sfn /opt/node/current/bin/node /usr/local/bin/node
+sudo ln -sfn /opt/node/current/bin/npm /usr/local/bin/npm
+sudo ln -sfn /opt/node/current/bin/npx /usr/local/bin/npx
+```
+
+For ARM64, use the corresponding `linux-arm64` archive and adjust the
+installation directory name in the symbolic link.
+
+Verify the runtime before installing Knap:
 
 ```bash
 node --version
 npm --version
 ```
 
-Install Knap globally with npm:
+Install and verify Knap:
 
 ```bash
 npm install -g knap
-```
-
-Verify the installation:
-
-```bash
 knap --version
 knap --help
 ```
 
-The report scripts require `knap` to be available on `PATH`. `npx knap` is also supported for manual Knap commands, but it does not satisfy the current renderer prerequisite unless the renderer is changed to invoke `npx`.
+The report scripts require `knap` to be available on `PATH`. `npx knap`
+may be used for manual commands, but it does not satisfy the current renderer
+prerequisite.
 
-### Offline installation
+### Offline installation for RHEL 9.8
 
-Offline installation is possible, but Node.js 20 or later must already be installed on the target machine. The safest approach is to prepare a complete local bundle on an Internet-connected machine, including Knap and its npm dependencies.
+For a customer environment without Internet access, prepare the complete
+bundle on an Internet-connected RHEL 9.8 machine with the same CPU
+architecture. The bundle should contain:
 
-On the online machine:
+- Node.js 20 or later.
+- Knap and all npm dependencies.
+- The report repository and its three templates.
+- `dct-toolkit`.
+- The matching `dct-toolkit.properties` file.
+
+The properties file may contain credentials or private connection details.
+Transfer it securely and never commit it to Git or include it in a public
+artifact.
+
+On the connected preparation machine:
 
 ```bash
-mkdir knap-offline
-cd knap-offline
-npm install --prefix ./bundle knap
-tar -czf knap-offline.tar.gz bundle
+NODE_VERSION=24.21.0
+NODE_ARCHIVE="node-v${NODE_VERSION}-linux-x64.tar.xz"
+
+mkdir -p node-knap-offline/node node-knap-offline/knap
+curl -fLO "https://nodejs.org/dist/v${NODE_VERSION}/${NODE_ARCHIVE}"
+tar -xJf "${NODE_ARCHIVE}" \
+  -C node-knap-offline/node \
+  --strip-components=1
+npm install --prefix ./node-knap-offline/knap knap
+tar -czf node-knap-offline.tar.gz node-knap-offline
 ```
 
-Transfer `knap-offline.tar.gz` to the offline machine and extract it, for example under `~/.local/opt`:
+Transfer `node-knap-offline.tar.gz`, the report repository, `dct-toolkit`,
+and the properties file through the customer's approved media or transfer
+process. On the offline report host:
 
 ```bash
 mkdir -p "$HOME/.local/opt"
-tar -xzf knap-offline.tar.gz -C "$HOME/.local/opt"
-export PATH="$HOME/.local/opt/bundle/node_modules/.bin:$PATH"
+tar -xzf node-knap-offline.tar.gz -C "$HOME/.local/opt"
+export PATH="$HOME/.local/opt/node-knap-offline/node/bin:$HOME/.local/opt/node-knap-offline/knap/node_modules/.bin:$PATH"
+
+node --version
+npm --version
 knap --version
 ```
 
-For a persistent user-level command, create a link after verifying the bundle:
+For a persistent user-level installation:
 
 ```bash
-ln -sfn "$HOME/.local/opt/bundle/node_modules/.bin/knap" \
-  "$HOME/.local/bin/knap"
+mkdir -p "$HOME/.local/bin"
+ln -sfn "$HOME/.local/opt/node-knap-offline/node/bin/node" "$HOME/.local/bin/node"
+ln -sfn "$HOME/.local/opt/node-knap-offline/node/bin/npm" "$HOME/.local/bin/npm"
+ln -sfn "$HOME/.local/opt/node-knap-offline/node/bin/npx" "$HOME/.local/bin/npx"
+ln -sfn "$HOME/.local/opt/node-knap-offline/knap/node_modules/.bin/knap" "$HOME/.local/bin/knap"
 ```
 
-This bundle method avoids relying on the npm registry or an npm cache on the offline machine. It does not include Node.js itself; if Node.js is also missing, it must be installed or transferred separately as a compatible runtime.
-
-The alternative below can work when the required package and dependency tarballs already exist in the local npm cache, but it is less reliable for a clean offline machine:
+Install the toolkit separately, for example:
 
 ```bash
-npm install --global --offline ./knap-*.tgz
+install -m 0755 dct-toolkit "$HOME/.local/bin/dct-toolkit"
+mkdir -p "$HOME/.config"
+install -m 0640 dct-toolkit.properties "$HOME/.config/dct-toolkit.properties"
+export DCT_TOOLKIT_BIN="$HOME/.local/bin/dct-toolkit"
 ```
+
+The exact toolkit properties location must match the toolkit configuration
+used by the customer. The fetcher only needs private network connectivity to
+DCT; it does not need public Internet access.
 
 ### Knap installation decision
 
-No project-specific package needs to be built for Knap. For online environments, npm installation is sufficient. For offline environments, we should distribute a versioned bundle containing the installed Node.js packages, and separately ensure that Node.js 20 or later is available.
+No project-specific package needs to be built for Knap. Online RHEL 9.8
+environments can use DNF or the official Node.js LTS bundle. Offline
+environments should use the versioned Node.js/Knap bundle and transfer the DCT
+toolkit and its properties file separately and securely.
 
 ## Requirements
 
@@ -246,11 +312,11 @@ To generate the final report directly:
 
 ```bash
 ./cc_install_report.py \
-  --client "Omarchy Test" \
-  --prefix "0-" \
-  --profile-set "ASDD Spanish" \
-  --template cc_install_report_sp.md \
-  --output /tmp/final-report.md
+  -c "ACME Corp" \
+  -p "0-" \
+  -o "ACME_Corp_$(date +%Y%m%d-%H%M%S).md" \
+  -t cc_install_report_sp.md \
+  -s "ASDD Spanish"
 ```
 
 The wrapper:
