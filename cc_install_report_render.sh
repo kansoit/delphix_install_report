@@ -10,12 +10,12 @@ TEMPLATE_FILE=""
 if [[ $# -eq 0 ]]; then
   cat <<'EOF'
 Uso: ./cc_install_report_render.sh [opciones]
-  -d, --data ARCHIVO.json       JSON normalizado de entrada (requerido).
+  -i, --input ARCHIVO.json      JSON normalizado de entrada (requerido).
   -o, --output ARCHIVO.md       Markdown de salida (requerido).
   -t, --template ARCHIVO.md     Plantilla de informe (requerido).
 
 Ejemplo:
-  ./cc_install_report_render.sh -d report-data/demo-client.json \
+  ./cc_install_report_render.sh -i report-data/demo-client.json \
     -t cc_install_report_sp.md -o report-data/demo-client.md
 EOF
   exit 0
@@ -23,18 +23,18 @@ fi
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    -d|-i|--data|--input) DATA_FILE="$2"; shift 2 ;;
+    -i|--input) DATA_FILE="$2"; shift 2 ;;
     -o|--output|--output-file) OUTPUT_FILE="$2"; shift 2 ;;
     -t|--template) TEMPLATE_FILE="$2"; shift 2 ;;
     -h|--help)
       cat <<'EOF'
 Uso: ./cc_install_report_render.sh [opciones]
-  -d, --data ARCHIVO.json       JSON normalizado de entrada (requerido).
+  -i, --input ARCHIVO.json      JSON normalizado de entrada (requerido).
   -o, --output ARCHIVO.md       Markdown de salida (requerido).
   -t, --template ARCHIVO.md     Plantilla de informe (requerido).
 
 Ejemplo:
-  ./cc_install_report_render.sh -d report-data/demo-client.json \
+  ./cc_install_report_render.sh -i report-data/demo-client.json \
     -t cc_install_report_sp.md -o report-data/demo-client.md
 EOF
       exit 0
@@ -43,7 +43,7 @@ EOF
   esac
 done
 
-[[ -n "${DATA_FILE}" ]] || { echo "ERROR: debe indicar el JSON con -d/--data." >&2; exit 1; }
+[[ -n "${DATA_FILE}" ]] || { echo "ERROR: debe indicar el JSON con -i/--input." >&2; exit 1; }
 [[ -n "${OUTPUT_FILE}" ]] || { echo "ERROR: debe indicar el Markdown con -o/--output." >&2; exit 1; }
 [[ -n "${TEMPLATE_FILE}" ]] || { echo "ERROR: debe indicar la plantilla con -t/--template." >&2; exit 1; }
 [[ -f "${DATA_FILE}" ]] || { echo "ERROR: JSON no encontrado: ${DATA_FILE}" >&2; exit 1; }

@@ -67,5 +67,5 @@ trap 'rm -f "${DATA_FILE}"' EXIT
 
 "${FETCH_SCRIPT}" "${FETCH_ARGS[@]}" --data-output "${DATA_FILE}"
 
-RENDER_ARGS=(-d "${DATA_FILE}" -t "${TEMPLATE_FILE}" -o "${OUTPUT_FILE}")
+RENDER_ARGS=(-i "${DATA_FILE}" -t "${TEMPLATE_FILE}" -o "${OUTPUT_FILE}")
 "${RENDER_SCRIPT}" "${RENDER_ARGS[@]}"
