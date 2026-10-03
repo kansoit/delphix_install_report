@@ -164,7 +164,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("-c", "--client", required=True)
     parser.add_argument("-p", "--prefix", required=True)
     parser.add_argument("-o", "--output", dest="data_file", metavar="JSON_FILE", required=True)
-    parser.add_argument("--data-output", dest="data_file", help=argparse.SUPPRESS)
     parser.add_argument("-s", "--profile-set", action="append", dest="profile_sets", metavar="PROFILE_SET", required=True)
     if len(sys.argv) == 1:
         parser.print_help()

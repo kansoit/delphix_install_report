@@ -32,7 +32,7 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     -c|--client) CLIENT_NAME="$2"; shift 2 ;;
     -p|--prefix) PREFIX="$2"; shift 2 ;;
-    -o|--output|--data-output) DATA_FILE="$2"; shift 2 ;;
+    -o|--output) DATA_FILE="$2"; shift 2 ;;
     -s|--profile-set)
       PROFILE_SET_ALLOWLIST+=("$2")
       PROFILE_SET_EXPLICIT=true

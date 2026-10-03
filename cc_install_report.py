@@ -49,7 +49,7 @@ def main() -> int:
         ) as temporary_data:
             temporary_data_path = Path(temporary_data.name)
             subprocess.run(
-                [str(FETCH_SCRIPT), *fetch_args, "--data-output", str(temporary_data_path)],
+                [str(FETCH_SCRIPT), *fetch_args, "--output", str(temporary_data_path)],
                 check=True,
             )
 
