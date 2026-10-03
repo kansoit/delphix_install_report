@@ -26,9 +26,9 @@ def parse_args() -> argparse.Namespace:
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument("-c", "--client", "--client-name", required=True)
+    parser.add_argument("-c", "--client", required=True)
     parser.add_argument("-p", "--prefix", required=True)
-    parser.add_argument("-o", "--output", "--output-file", dest="output_file", metavar="MARKDOWN_FILE", required=True)
+    parser.add_argument("-o", "--output", dest="output_file", metavar="MARKDOWN_FILE", required=True)
     parser.add_argument("-t", "--template", required=True)
     parser.add_argument("-s", "--profile-set", action="append", dest="profile_sets", metavar="PROFILE_SET", required=True)
     if len(sys.argv) == 1:
