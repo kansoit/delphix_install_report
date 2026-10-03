@@ -212,23 +212,23 @@ Parameters:
 Example:
 
 ```bash
-./cc_install_report_render.py \
-  --input /tmp/report-data.json \
-  --output /tmp/report.md
+./cc_install_report_render.py -i ACME_Corp_20261003-115138.json \
+  -o "ACME_Corp_$(date +%Y%m%d-%H%M%S).md" \
+  -t "cc_install_report_sp.md"
 ```
 
 Render in Portuguese or English by selecting the template explicitly:
 
 ```bash
 ./cc_install_report_render.py \
-  --input /tmp/report-data.json \
-  --template cc_install_report_pt.md \
-  --output /tmp/report-pt.md
+  -i ACME_Corp_20261003-115138.json \
+  -o "ACME_Corp_$(date +%Y%m%d-%H%M%S).md" \
+  -t "cc_install_report_pt.md"
 
 ./cc_install_report_render.py \
-  --input /tmp/report-data.json \
-  --template cc_install_report_en.md \
-  --output /tmp/report-en.md
+  -i ACME_Corp_20261003-115138.json \
+  -o "ACME_Corp_$(date +%Y%m%d-%H%M%S).md" \
+  -t "cc_install_report_en.md"
 ```
 
 Before rendering, the script:
@@ -238,11 +238,7 @@ Before rendering, the script:
 3. Runs the render operation.
 4. Adds a final newline to keep the output compatible with the original report.
 
-When `-o` is omitted, the output filename is built from `.client` in the JSON:
-
-```text
-<client> - Reporte Configuracion Delphix Continuous Compliance.md
-```
+The output path is always supplied explicitly with `-o`/`--output`.
 
 ## Complete wrapper
 
