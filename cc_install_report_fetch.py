@@ -153,9 +153,11 @@ def parse_args() -> argparse.Namespace:
         description="Collect and normalize Delphix DCT data.",
         epilog=(
             "Example:\n"
-            "  ./cc_install_report_fetch.py -c \"Demo Client\" -p \"0-\" "
-            "--profile-set \"ASDD Spanish\" "
-            "-o report-data/demo-client.json"
+            "  ./cc_install_report_fetch.py \\\n"
+            "    -c \"ACME Corp\" \\\n"
+            "    -p \"0-\" \\\n"
+            "    -o \"ACME_Corp_$(date +%Y%m%d-%H%M%S).json\" \\\n"
+            "    -s \"ASDD Spanish\""
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
