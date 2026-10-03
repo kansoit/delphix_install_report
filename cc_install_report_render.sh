@@ -24,7 +24,7 @@ fi
 while [[ $# -gt 0 ]]; do
   case "$1" in
     -i|--input) DATA_FILE="$2"; shift 2 ;;
-    -o|--output|--output-file) OUTPUT_FILE="$2"; shift 2 ;;
+    -o|--output) OUTPUT_FILE="$2"; shift 2 ;;
     -t|--template) TEMPLATE_FILE="$2"; shift 2 ;;
     -h|--help)
       cat <<'EOF'

@@ -51,7 +51,7 @@ Ejemplo:
 EOF
       exit 0
       ;;
-    -o|--output|--output-file) OUTPUT_FILE="$2"; shift 2 ;;
+    -o|--output) OUTPUT_FILE="$2"; shift 2 ;;
     *) FETCH_ARGS+=("$1"); shift ;;
   esac
 done
