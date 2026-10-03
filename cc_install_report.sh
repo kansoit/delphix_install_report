@@ -22,9 +22,12 @@ Uso: ./cc_install_report.sh [opciones]
   -s, --profile-set NOMBRE              Profile Set; puede repetirse.
 
 Ejemplo:
-  ./cc_install_report.sh -c "Demo Client" -p "0-" \
-    --profile-set "ASDD Spanish" -t cc_install_report_sp.md \
-    -o report-data/demo-client.md
+  ./cc_install_report.sh \
+    -c "ACME Corp" \
+    -p "0-" \
+    -o "ACME_Corp_$(date +%Y%m%d-%H%M%S).md" \
+    -t cc_install_report_sp.md \
+    -s "ASDD Spanish"
 EOF
   exit 0
 fi
@@ -45,9 +48,12 @@ Uso: ./cc_install_report.sh [opciones]
   -s, --profile-set NOMBRE              Profile Set; puede repetirse.
 
 Ejemplo:
-  ./cc_install_report.sh -c "Demo Client" -p "0-" \
-    --profile-set "ASDD Spanish" -t cc_install_report_sp.md \
-    -o report-data/demo-client.md
+  ./cc_install_report.sh \
+    -c "ACME Corp" \
+    -p "0-" \
+    -o "ACME_Corp_$(date +%Y%m%d-%H%M%S).md" \
+    -t cc_install_report_sp.md \
+    -s "ASDD Spanish"
 EOF
       exit 0
       ;;

@@ -20,9 +20,12 @@ def parse_args() -> argparse.Namespace:
         description="Recolecta datos desde DCT y genera el reporte Markdown.",
         epilog=(
             "Example:\n"
-            "  ./cc_install_report.py -c \"Demo Client\" -p \"0-\" "
-            "--profile-set \"ASDD Spanish\" "
-            "-t cc_install_report_sp.md -o report-data/demo-client.md"
+            "  ./cc_install_report.py \\\n"
+            "    -c \"ACME Corp\" \\\n"
+            "    -p \"0-\" \\\n"
+            "    -o \"ACME_Corp_$(date +%Y%m%d-%H%M%S).md\" \\\n"
+            "    -t cc_install_report_sp.md \\\n"
+            "    -s \"ASDD Spanish\""
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )

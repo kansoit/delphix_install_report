@@ -246,11 +246,11 @@ To generate the final report directly:
 
 ```bash
 ./cc_install_report.py \
-  --client "Omarchy Test" \
-  --prefix "0-" \
-  --profile-set "ASDD Spanish" \
-  --template cc_install_report_sp.md \
-  --output /tmp/final-report.md
+  -c "ACME Corp" \
+  -p "0-" \
+  -o "ACME_Corp_$(date +%Y%m%d-%H%M%S).md" \
+  -t cc_install_report_sp.md \
+  -s "ASDD Spanish"
 ```
 
 The wrapper:
