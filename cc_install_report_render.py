@@ -20,8 +20,9 @@ def parse_args() -> argparse.Namespace:
         description="Render a normalized report with Knap.",
         epilog=(
             "Example:\n"
-            "  ./cc_install_report_render.py --input report-data/demo-client.json "
-            "--template cc_install_report_sp.md --output report-data/demo-client.md"
+            "  ./cc_install_report_render.py -i ACME_Corp_20261003-115138.json "
+            "-o \"ACME_Corp_$(date +%Y%m%d-%H%M%S).md\" "
+            "-t \"cc_install_report_sp.md\""
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
