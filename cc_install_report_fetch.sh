@@ -16,9 +16,7 @@ Uso: ./cc_install_report_fetch.sh [opciones]
   -c, --client CLIENTE                  Nombre del cliente (requerido).
   -p, --prefix PREFIJO                  Prefijo de filtrado (requerido).
   -o, --output ARCHIVO.json             JSON normalizado de salida (requerido).
-      --profile-set NOMBRE              Profile Set; puede repetirse.
-      --profile-sets NOMBRE1,NOMBRE2   Profile Sets separados por comas.
-  La selección de Profile Set es requerida y ambas opciones son excluyentes.
+  -s, --profile-set NOMBRE              Profile Set; puede repetirse.
 
 Ejemplo:
   ./cc_install_report_fetch.sh -c "Demo Client" -p "0-" \
@@ -32,13 +30,8 @@ while [[ $# -gt 0 ]]; do
     -c|--client|--client-name) CLIENT_NAME="$2"; shift 2 ;;
     -p|--prefix) PREFIX="$2"; shift 2 ;;
     -o|--output|--data-output) DATA_FILE="$2"; shift 2 ;;
-    --profile-set)
+    -s|--profile-set)
       PROFILE_SET_ALLOWLIST+=("$2")
-      PROFILE_SET_EXPLICIT=true
-      shift 2
-      ;;
-    --profile-sets)
-      IFS=',' read -r -a PROFILE_SET_ALLOWLIST <<< "$2"
       PROFILE_SET_EXPLICIT=true
       shift 2
       ;;
@@ -48,9 +41,7 @@ Uso: ./cc_install_report_fetch.sh [opciones]
   -c, --client CLIENTE                  Nombre del cliente (requerido).
   -p, --prefix PREFIJO                  Prefijo de filtrado (requerido).
   -o, --output ARCHIVO.json             JSON normalizado de salida (requerido).
-      --profile-set NOMBRE              Profile Set; puede repetirse.
-      --profile-sets NOMBRE1,NOMBRE2   Profile Sets separados por comas.
-  La selección de Profile Set es requerida y ambas opciones son excluyentes.
+  -s, --profile-set NOMBRE              Profile Set; puede repetirse.
 
 Ejemplo:
   ./cc_install_report_fetch.sh -c "Demo Client" -p "0-" \
@@ -65,7 +56,7 @@ done
 [[ -n "${CLIENT_NAME}" ]] || { echo "ERROR: debe indicar --client." >&2; exit 1; }
 [[ -n "${PREFIX}" ]] || { echo "ERROR: debe indicar --prefix." >&2; exit 1; }
 [[ -n "${DATA_FILE}" ]] || { echo "ERROR: debe indicar --output." >&2; exit 1; }
-[[ "${PROFILE_SET_EXPLICIT}" == true ]] || { echo "ERROR: debe indicar --profile-set o --profile-sets." >&2; exit 1; }
+[[ "${PROFILE_SET_EXPLICIT}" == true ]] || { echo "ERROR: debe indicar --profile-set." >&2; exit 1; }
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if [[ "${DATA_FILE}" != /* && "${DATA_FILE}" != ./* && "${DATA_FILE}" != ../* ]]; then
