@@ -19,8 +19,11 @@ Uso: ./cc_install_report_fetch.sh [opciones]
   -s, --profile-set NOMBRE              Profile Set; puede repetirse.
 
 Ejemplo:
-  ./cc_install_report_fetch.sh -c "Demo Client" -p "0-" \
-    --profile-set "ASDD Spanish" -o report-data/demo-client.json
+  ./cc_install_report_fetch.sh \
+    -c "ACME Corp" \
+    -p "0-" \
+    -o "ACME_Corp_$(date +%Y%m%d-%H%M%S).json" \
+    -s "ASDD Spanish"
 EOF
   exit 0
 fi
@@ -44,8 +47,11 @@ Uso: ./cc_install_report_fetch.sh [opciones]
   -s, --profile-set NOMBRE              Profile Set; puede repetirse.
 
 Ejemplo:
-  ./cc_install_report_fetch.sh -c "Demo Client" -p "0-" \
-    --profile-set "ASDD Spanish" -o report-data/demo-client.json
+  ./cc_install_report_fetch.sh \
+    -c "ACME Corp" \
+    -p "0-" \
+    -o "ACME_Corp_$(date +%Y%m%d-%H%M%S).json" \
+    -s "ASDD Spanish"
 EOF
       exit 0
       ;;
