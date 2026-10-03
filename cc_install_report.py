@@ -17,12 +17,15 @@ RENDER_SCRIPT = SCRIPT_DIR / "cc_install_report_render.py"
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Recolecta datos desde DCT y genera el reporte Markdown.",
+        description="Collects data from DCT and generates the Markdown report.",
         epilog=(
             "Example:\n"
-            "  ./cc_install_report.py -c \"Demo Client\" -p \"0-\" "
-            "--profile-set \"ASDD Spanish\" "
-            "-t cc_install_report_sp.md -o report-data/demo-client.md"
+            "  ./cc_install_report.py \\\n"
+            "    -c \"ACME Corp\" \\\n"
+            "    -p \"0-\" \\\n"
+            "    -o \"ACME_Corp_$(date +%Y%m%d-%H%M%S).md\" \\\n"
+            "    -t cc_install_report_sp.md \\\n"
+            "    -s \"ASDD Spanish\""
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
@@ -49,7 +52,7 @@ def main() -> int:
         ) as temporary_data:
             temporary_data_path = Path(temporary_data.name)
             subprocess.run(
-                [str(FETCH_SCRIPT), *fetch_args, "--data-output", str(temporary_data_path)],
+                [str(FETCH_SCRIPT), *fetch_args, "--output", str(temporary_data_path)],
                 check=True,
             )
 
@@ -61,7 +64,7 @@ def main() -> int:
             ]
             subprocess.run(render_args, check=True)
     except (OSError, subprocess.CalledProcessError) as exc:
-        print(f"ERROR: no se pudo generar el reporte: {exc}", file=sys.stderr)
+        print(f"ERROR: could not generate the report: {exc}", file=sys.stderr)
         return 1
 
     return 0
