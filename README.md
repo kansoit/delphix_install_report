@@ -138,23 +138,6 @@ To generate a report for only the Spanish Profile Set:
   --output report-data/acme-corp.json
 ```
 
-### Pagination
-
-The fetcher does not limit the total number of results. It repeatedly queries DCT using `response_metadata.next_cursor` until all records have been retrieved.
-
-The fetcher uses an internal page size of `1000` and continues until DCT
-returns no next cursor; this is not a result limit.
-
-```bash
-./cc_install_report_fetch.py \
-  --client "ACME Corp" \
-  --prefix "0-" \
-  --profile-set "ASDD Spanish" \
-  --output report-data/acme-corp.json
-```
-
-The page size controls only the size of each request; it is not a result limit.
-
 ## Renderer
 
 Built-in help:
@@ -259,12 +242,22 @@ This allows the Markdown to be regenerated multiple times without querying DCT a
 
 | Variable | Purpose | Default |
 | :--- | :--- | :--- |
-| `DCT_TOOLKIT_BIN` | Path to the `dct-toolkit` executable. | `~/.local/bin/dct-toolkit` |
+| `DCT_TOOLKIT_BIN` | Optional path to the `dct-toolkit` executable. | `~/.local/bin/dct-toolkit` |
 
-Example:
+No variable is required when `dct-toolkit` is installed at the default path:
 
 ```bash
-DCT_TOOLKIT_BIN=/opt/dct-toolkit/bin/dct-toolkit \
+./cc_install_report_fetch.py \
+  --client "ACME Corp" \
+  --prefix "0-" \
+  --profile-set "ASDD Spanish" \
+  --output report-data/acme-corp.json
+```
+
+Use `DCT_TOOLKIT_BIN` only when the executable is installed somewhere else:
+
+```bash
+DCT_TOOLKIT_BIN="/opt/dct-toolkit/bin/dct-toolkit" \
 ./cc_install_report_fetch.py \
   --client "ACME Corp" \
   --prefix "0-" \
