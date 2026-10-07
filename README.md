@@ -2,6 +2,9 @@
 
 Generator for Delphix Continuous Compliance Markdown reports using information retrieved from Data Control Tower (DCT).
 
+This project currently generates reports only for Delphix Continuous Compliance. Report generation
+for Delphix Continuous Data is not implemented yet and remains pending.
+
 The project separates data collection from document generation:
 
 ```text
@@ -308,3 +311,7 @@ The normalized JSON and template cover:
 - Profiling and Masking jobs.
 
 The collection phase preserves the data as JSON, while the presentation phase remains isolated in the template. This makes it possible to change the report format without querying DCT again.
+
+## TODO
+
+- Add report generation support for Delphix Continuous Data.
