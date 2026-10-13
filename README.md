@@ -130,7 +130,7 @@ Parameters:
 | :--- | :--- |
 | `-c`, `--client CLIENT` | Client name included in the data and report. |
 | `-p`, `--prefix PREFIX` | Prefix used to filter algorithms, data classes, and classifiers. |
-| `-e`, `--engine ENGINE` | Optional exact name of the masking engine to include. Without this option, all masking engines are included. |
+| `-e`, `--engine ENGINE` | Optional exact name of the masking engine to include. Use `DCT / Global` for objects without an associated engine. Without this option, all masking engines and global DCT objects are included. |
 | `-o`, `--output FILE.json` | Required output path for the normalized JSON. |
 | `-s`, `--profile-set NAME` | Required Profile Set selection; may be repeated. |
 | `-h`, `--help` | Display help. |

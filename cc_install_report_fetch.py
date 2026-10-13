@@ -17,6 +17,7 @@ from typing import Any
 
 FETCH_WORKERS = 4
 PAGE_SIZE = 1000
+DCT_GLOBAL_ENGINE = "DCT / Global"
 
 
 def text(value: Any, fallback: str = "-") -> str:
@@ -216,14 +217,18 @@ def main() -> int:
             for item in engines_raw
             if item.get("type") == "MASKING" and item.get("name")
         }
-        if args.engine and args.engine not in masking_engine_names:
-            available = ", ".join(sorted(masking_engine_names)) or "none"
+        if args.engine and args.engine not in masking_engine_names and args.engine != DCT_GLOBAL_ENGINE:
+            available = ", ".join(sorted((*masking_engine_names, DCT_GLOBAL_ENGINE))) or "none"
             raise RuntimeError(
                 f"Masking engine not found: {args.engine}. Available engines: {available}"
             )
 
         def belongs_to_engine(item: dict[str, Any]) -> bool:
-            return not args.engine or item.get("engine_name") == args.engine
+            if not args.engine:
+                return True
+            if args.engine == DCT_GLOBAL_ENGINE:
+                return not item.get("engine_name")
+            return item.get("engine_name") == args.engine
 
         if args.engine:
             engines_raw = [item for item in engines_raw if item.get("name") == args.engine]
