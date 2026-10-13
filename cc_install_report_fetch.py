@@ -217,6 +217,21 @@ def main() -> int:
             for item in engines_raw
             if item.get("type") == "MASKING" and item.get("name")
         }
+        registered_engine_types = {
+            str(item.get("name")): text(item.get("type"), "UNKNOWN")
+            for item in engines_raw
+            if item.get("name")
+        }
+        if (
+            args.engine
+            and args.engine != DCT_GLOBAL_ENGINE
+            and args.engine in registered_engine_types
+            and args.engine not in masking_engine_names
+        ):
+            raise RuntimeError(
+                f"Engine '{args.engine}' is not a masking engine "
+                f"(type: {registered_engine_types[args.engine]})."
+            )
         if args.engine and args.engine not in masking_engine_names and args.engine != DCT_GLOBAL_ENGINE:
             available = ", ".join(sorted((*masking_engine_names, DCT_GLOBAL_ENGINE))) or "none"
             raise RuntimeError(
