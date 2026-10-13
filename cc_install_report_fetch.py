@@ -163,6 +163,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("-c", "--client", required=True)
     parser.add_argument("-p", "--prefix", required=True)
+    parser.add_argument("-e", "--engine", metavar="ENGINE", help="Optional masking engine name filter.")
     parser.add_argument("-o", "--output", dest="data_file", metavar="JSON_FILE", required=True)
     parser.add_argument("-s", "--profile-set", action="append", dest="profile_sets", metavar="PROFILE_SET", required=True)
     if len(sys.argv) == 1:
@@ -209,6 +210,30 @@ def main() -> int:
             engines_raw, smtp, ldap, algorithms_raw, data_classes_raw,
             classifiers_raw, policies_raw, connectors_raw, rule_sets_raw, jobs_raw,
         ) = parallel_map(initial_calls, run_initial)
+
+        masking_engine_names = {
+            str(item.get("name"))
+            for item in engines_raw
+            if item.get("type") == "MASKING" and item.get("name")
+        }
+        if args.engine and args.engine not in masking_engine_names:
+            available = ", ".join(sorted(masking_engine_names)) or "none"
+            raise RuntimeError(
+                f"Masking engine not found: {args.engine}. Available engines: {available}"
+            )
+
+        def belongs_to_engine(item: dict[str, Any]) -> bool:
+            return not args.engine or item.get("engine_name") == args.engine
+
+        if args.engine:
+            engines_raw = [item for item in engines_raw if item.get("name") == args.engine]
+            algorithms_raw = [item for item in algorithms_raw if belongs_to_engine(item)]
+            data_classes_raw = [item for item in data_classes_raw if belongs_to_engine(item)]
+            classifiers_raw = [item for item in classifiers_raw if belongs_to_engine(item)]
+            policies_raw = [item for item in policies_raw if belongs_to_engine(item)]
+            connectors_raw = [item for item in connectors_raw if belongs_to_engine(item)]
+            rule_sets_raw = [item for item in rule_sets_raw if belongs_to_engine(item)]
+            jobs_raw = [item for item in jobs_raw if belongs_to_engine(item)]
 
         selected_policies = [policy for policy in policies_raw if policy.get("name") in allowed_profiles]
         def fetch_policy_classifiers(policy: dict[str, Any]) -> tuple[str, list[dict[str, Any]]]:
@@ -291,7 +316,7 @@ def main() -> int:
                 "last_file": file_name(((last.get("config") or {}).get("lookupFile") or {}).get("uri")),
                 "description": text(item.get("description")).replace("\r", "").replace("\n", " "),
             })
-        simple_algorithms.sort(key=lambda item: item["name"])
+        simple_algorithms.sort(key=lambda item: (item["engine"], item["name"]))
         composite_algorithms.sort(key=lambda item: item["name"])
 
         masking_engines = []
@@ -339,7 +364,7 @@ def main() -> int:
             {"name": text(item.get("name")), "host": text(item.get("hostname")), "database": text(item.get("database_name")),
              "schema": text(item.get("schema_name")), "user": text(item.get("username")), "platform": text(item.get("platform")),
              "engine": connector_engine(item)} for item in connectors_raw
-        ], key=lambda item: item["name"])
+        ], key=lambda item: (item["engine"], item["name"]))
         jdbc_properties = []
         for connection in connection_properties:
             for item in connection.get("items", []):
@@ -369,7 +394,8 @@ def main() -> int:
                 profiling_jobs.append({**common, "profile_set": text(item.get("discovery_policy_name"))})
             elif item.get("type") == "MASKING":
                 masking_jobs.append({**common, "on_the_fly": str(bool(item.get("is_on_the_fly_masking", False))).lower(), "truncate": str(bool(item.get("truncate_tables", False))).lower(), "drop_indexes": str(bool(item.get("drop_indexes", False))).lower()})
-        masking_jobs.sort(key=lambda item: item["name"])
+        profiling_jobs.sort(key=lambda item: (item["engine"], item["name"]))
+        masking_jobs.sort(key=lambda item: (item["engine"], item["name"]))
 
         smtp = smtp if isinstance(smtp, dict) else {}
         ldap = ldap if isinstance(ldap, dict) else {}
@@ -381,7 +407,7 @@ def main() -> int:
             "smtp": {"host": text(get_value(smtp, "hostname", "host")), "port": text(smtp.get("port")), "enabled": str(bool(smtp.get("enabled", False))).lower(), "authentication": str(bool(smtp.get("authentication_enabled", False))).lower(), "tls": str(bool(smtp.get("tls_enabled", False))).lower(), "from": text(smtp.get("from_address"))},
             "ldap": {"enabled": str(bool(ldap.get("enabled", False))).lower(), "host": text(get_value(ldap, "hostname", "host")), "port": text(ldap.get("port")), "domains": ", ".join(f"`{value}`" for value in ldap_domains) or "-", "auto_create_users": str(bool(ldap.get("auto_create_users", False))).lower(), "ssl": str(bool(ldap.get("enable_ssl", False))).lower()},
             "simple_algorithms": simple_algorithms, "composite_algorithms": composite_algorithms,
-            "data_classes": sorted([{"name": text(item.get("name")), "algorithm": text(item.get("default_algorithm_name")), "engine": engine(item.get("engine_name"))} for item in data_classes_raw if prefixed(item)], key=lambda item: item["name"]),
+            "data_classes": sorted([{"name": text(item.get("name")), "algorithm": text(item.get("default_algorithm_name")), "engine": engine(item.get("engine_name"))} for item in data_classes_raw if prefixed(item)], key=lambda item: (item["engine"], item["name"])),
             "classifiers_path_regex": classifiers_path_regex, "classifiers_list": classifiers_list, "classifiers_data_type": classifiers_data_type,
             "profile_sets": profile_sets,
             "connectors": connectors, "jdbc_properties": jdbc_properties,
@@ -390,7 +416,7 @@ def main() -> int:
                 "engine": engine(item.get("engine_name")),
                 "description": text(item.get("description")),
                 "id": text(item.get("id")),
-            } for item in rule_sets_raw], key=lambda item: item["name"]),
+            } for item in rule_sets_raw], key=lambda item: (item["engine"], item["name"])),
             "rule_columns": rule_columns, "rule_tables": rule_tables,
             "profiling_jobs": profiling_jobs, "masking_jobs": masking_jobs,
         }

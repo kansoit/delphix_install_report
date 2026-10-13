@@ -31,6 +31,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("-c", "--client", required=True)
     parser.add_argument("-p", "--prefix", required=True)
+    parser.add_argument("-e", "--engine", metavar="ENGINE", help="Optional masking engine name filter.")
     parser.add_argument("-o", "--output", dest="output_file", metavar="MARKDOWN_FILE", required=True)
     parser.add_argument("-t", "--template", required=True)
     parser.add_argument("-s", "--profile-set", action="append", dest="profile_sets", metavar="PROFILE_SET", required=True)
@@ -43,6 +44,8 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     fetch_args = ["--client", args.client, "--prefix", args.prefix]
+    if args.engine:
+        fetch_args.extend(["--engine", args.engine])
 
     for profile_set in args.profile_sets or []:
         fetch_args.extend(["--profile-set", profile_set])

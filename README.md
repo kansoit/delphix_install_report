@@ -103,6 +103,9 @@ Receives normalized JSON and generates Markdown using the selected template. It 
 
 Convenience wrapper. Runs the Python fetcher and renderer in a single operation. The intermediate JSON is created temporarily and removed when the process finishes.
 
+The wrapper accepts the same `--engine` filter as the fetcher. When omitted, all registered masking
+engines are included; when provided, only objects associated with the exact engine name are included.
+
 ### Report templates
 
 The templates define the same report structure, fields, tables, and formatting in Spanish, Portuguese, and English.
@@ -127,6 +130,7 @@ Parameters:
 | :--- | :--- |
 | `-c`, `--client CLIENT` | Client name included in the data and report. |
 | `-p`, `--prefix PREFIX` | Prefix used to filter algorithms, data classes, and classifiers. |
+| `-e`, `--engine ENGINE` | Optional exact name of the masking engine to include. Without this option, all masking engines are included. |
 | `-o`, `--output FILE.json` | Required output path for the normalized JSON. |
 | `-s`, `--profile-set NAME` | Required Profile Set selection; may be repeated. |
 | `-h`, `--help` | Display help. |
@@ -138,6 +142,7 @@ To generate a report for only the Spanish Profile Set:
   --client "ACME Corp" \
   --prefix "0-" \
   --profile-set "ASDD Spanish" \
+  --engine "DPXMSK" \
   --output report-data/acme-corp.json
 ```
 
@@ -205,7 +210,8 @@ To generate the final report directly:
   -p "0-" \
   -o "ACME_Corp_$(date +%Y%m%d-%H%M%S).md" \
   -t cc_install_report_sp.md \
-  -s "ASDD Spanish"
+  -s "ASDD Spanish" \
+  -e "DPXMSK"
 ```
 
 The wrapper:
